@@ -1,98 +1,314 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Locker Rental Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive backend API for a locker rental platform built with NestJS, MongoDB, and TypeScript. This application allows users to find and rent lockers at various businesses across Atlanta.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+### 🔐 Authentication & Authorization
+- JWT-based authentication
+- User registration and login
+- Role-based access control (user, business, admin)
+- Secure password hashing with bcrypt
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 🏢 Business Management
+- Business owner registration and profile management
+- Location-based business search using MongoDB geospatial queries
+- Business categorization (restaurants, cafes, offices, etc.)
+- Operating hours and amenities management
+- Rating and review system
 
-## Project setup
+### 📅 Booking System
+- Real-time locker availability checking
+- Time-based booking conflicts prevention
+- Flexible booking duration (max 10 hours)
+- Booking status management (pending, confirmed, active, completed, cancelled)
+- Automatic booking expiration and cleanup
 
+### 🗺️ Location Services
+- Geographic location indexing with 2dsphere indexes
+- Find nearby businesses within specified radius
+- Address and zip code-based searching
+- Coordinate-based distance calculations
+
+### 👥 User Management
+- User profile management
+- Booking history and statistics
+- Account status management
+- Phone number and email verification
+
+## Technology Stack
+
+- **Framework**: NestJS
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: JWT with Passport
+- **Validation**: Class Validator & Class Transformer
+- **Documentation**: Swagger/OpenAPI
+- **Testing**: Jest
+- **Language**: TypeScript
+
+## Environment Setup
+
+1. **Clone the repository**
 ```bash
-$ npm install
+git clone <your-repository-url>
+cd locker-rental-backend
 ```
 
-## Compile and run the project
-
+2. **Install dependencies**
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
+3. **Environment Configuration**
+```bash
+# Copy the example environment file
+cp .env.example .env
+```
+
+Edit `.env` with your configuration:
+```env
+# Database
+MONGODB_URI=mongodb://localhost:27017/locker-rental
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-here
+JWT_EXPIRES_IN=24h
+
+# Application
+PORT=3002
+NODE_ENV=development
+
+# Optional: Google Maps API for enhanced location services
+GOOGLE_MAPS_API_KEY=your-google-maps-api-key
+```
+
+4. **Database Setup**
+- Install and start MongoDB locally, or use MongoDB Atlas
+- The application will automatically create the necessary collections
+- Run the seed script to populate with sample data:
+```bash
+npm run seed
+```
+
+## Running the Application
 
 ```bash
-# unit tests
-$ npm run test
+# Development mode with hot reload
+npm run start:dev
+
+# Production mode
+npm run start:prod
+
+# Debug mode
+npm run start:debug
+```
+
+The application will start on `http://localhost:3002`
+
+## API Documentation
+
+Once the application is running, access the Swagger API documentation at:
+`http://localhost:3002/api/docs`
+
+## Database Schema
+
+### Users
+- Personal information (firstName, lastName, email, phone)
+- Authentication credentials (password hash)
+- Role-based permissions
+- Account status tracking
+
+### Businesses
+- Business details (name, description, type)
+- Location data with geospatial indexing
+- Operating hours and contact information
+- Locker inventory (total and available counts)
+- Pricing and amenities
+- Owner relationship and verification status
+
+### Bookings
+- User and business relationships
+- Time slot management (start/end times)
+- Locker assignment and duration tracking
+- Status workflow (pending → confirmed → active → completed)
+- Payment integration readiness
+- Access code generation for lockers
+
+## API Endpoints
+
+### Authentication (`/auth`)
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `GET /auth/profile` - Get user profile (protected)
+
+### Users (`/users`)
+- `GET /users/profile` - Get current user profile
+- `PATCH /users/profile` - Update user profile
+- `GET /users/stats` - Get user booking statistics
+
+### Businesses (`/businesses`)
+- `GET /businesses` - List all businesses with filters
+- `POST /businesses` - Create new business (business owners)
+- `GET /businesses/:id` - Get business details
+- `PATCH /businesses/:id` - Update business details
+- `DELETE /businesses/:id` - Soft delete business
+- `GET /businesses/search` - Search businesses by criteria
+- `GET /businesses/nearby` - Find businesses by location
+- `GET /businesses/owner/:ownerId` - Get businesses by owner
+
+### Bookings (`/bookings`)
+- `GET /bookings` - List bookings with filters
+- `POST /bookings` - Create new booking
+- `GET /bookings/:id` - Get booking details
+- `PATCH /bookings/:id` - Update booking
+- `DELETE /bookings/:id/cancel` - Cancel booking
+- `GET /bookings/my-bookings` - Get current user's bookings
+- `GET /bookings/business/:businessId` - Get business bookings
+- `GET /bookings/available-lockers/:businessId` - Check locker availability
+
+## Testing
+
+```bash
+# Unit tests
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# Test coverage
+npm run test:cov
+
+# Watch mode
+npm run test:watch
 ```
+
+## Code Quality
+
+```bash
+# Linting
+npm run lint
+
+# Formatting
+npm run format
+```
+
+## Sample Data
+
+The application includes a seed script that creates sample data for testing:
+
+- **Test Users**: Regular user, business owner, and admin accounts
+- **Sample Businesses**: Atlanta locations including:
+  - Ponce City Market (restaurant/food hall)
+  - Krog Street Market (restaurant/food hall)
+  - The Battery Atlanta (entertainment complex)
+  - ADP Alpharetta Office (corporate office)
+- **Sample Bookings**: Active and completed bookings for demonstration
+
+Run with: `npm run seed`
+
+## Project Structure
+
+```
+src/
+├── auth/                 # Authentication module
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── jwt.strategy.ts
+│   └── jwt-auth.guard.ts
+├── users/               # User management module
+├── businesses/          # Business management module
+├── bookings/           # Booking system module
+├── schemas/            # MongoDB schemas
+│   ├── user.schema.ts
+│   ├── business.schema.ts
+│   └── booking.schema.ts
+├── dto/                # Data Transfer Objects
+│   ├── auth.dto.ts
+│   ├── business.dto.ts
+│   └── booking.dto.ts
+└── main.ts             # Application entry point
+```
+
+## Key Features Deep Dive
+
+### 🔍 Intelligent Location Search
+- **Geospatial Queries**: Uses MongoDB's 2dsphere indexes for efficient location-based searches
+- **Radius Search**: Find businesses within customizable distance ranges
+- **Address Lookup**: Search by street address, city, or zip code
+- **Business Categorization**: Filter by restaurant, cafe, office, or other business types
+
+### ⏰ Advanced Booking Management
+- **Real-time Availability**: Prevents double-booking with conflict detection
+- **Flexible Duration**: Support for 1-10 hour rental periods
+- **Automatic Cleanup**: Expired booking management and status updates
+- **Cancellation Policy**: 1-hour advance cancellation requirement
+- **Access Codes**: Secure locker access with generated codes
+
+### 🛡️ Security & Validation
+- **Input Validation**: Comprehensive DTO validation with class-validator
+- **JWT Authentication**: Secure token-based authentication
+- **Role-based Access**: Different permissions for users, business owners, and admins
+- **Data Sanitization**: Protected against common security vulnerabilities
+
+### 📊 Business Analytics Ready
+- **Booking Statistics**: Track user booking patterns and business performance
+- **Revenue Tracking**: Built-in total amount calculation for financial reporting
+- **Rating System**: User feedback and business rating infrastructure
+- **Usage Metrics**: Detailed logging for business intelligence
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### Docker Deployment (Recommended)
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Build the application
+npm run build
+
+# Create Docker image
+docker build -t locker-rental-backend .
+
+# Run with Docker Compose (include MongoDB)
+docker-compose up -d
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Traditional Deployment
+```bash
+# Build for production
+npm run build
 
-## Resources
+# Start production server
+npm run start:prod
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Environment Variables for Production
+```env
+NODE_ENV=production
+PORT=3002
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/locker-rental
+JWT_SECRET=your-production-jwt-secret-256-bit
+JWT_EXPIRES_IN=24h
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Contributing
 
-## Support
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Future Enhancements
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- 💳 **Payment Integration**: Stripe/PayPal integration for booking payments
+- 📱 **Push Notifications**: Real-time booking updates and reminders
+- 🔐 **QR Code Access**: QR code generation for locker access
+- 📈 **Analytics Dashboard**: Business owner analytics and reporting
+- 🌐 **Multi-language Support**: Internationalization for global markets
+- 🔄 **Real-time Updates**: WebSocket integration for live availability
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is private and unlicensed. All rights reserved.
+
+## Support
+
+For support and questions, please contact the development team or create an issue in the repository.
